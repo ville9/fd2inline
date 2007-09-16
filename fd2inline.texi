@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename fd2inline.info
 @settitle FD2InLine User's Guide
-@set lastupdate March 22nd, 1998
+@set lastupdate September 16th, 2007
 @include version.texi
 @c %**end of header
 
@@ -29,7 +29,7 @@ preserved on all copies.
 @ifinfo
 @node Top, Introduction, (dir), (dir)
 This is a user's guide to @samp{FD2Inline} @value{version}, a parser
-that converts the AmigaOS and p.OS shared library @samp{FD} files to
+that converts the AmigaOS shared library @samp{FD} files to
 format accepted by the @samp{GNU CC}.
 
 See file @file{COPYING} for the GNU General Public License.
@@ -55,17 +55,13 @@ Last updated @value{lastupdate}.
 @cindex What FD2InLine is
 
 @samp{FD2InLine} is useful if you want to use @samp{GCC} for AmigaOS
-and p.OS specific development and would like to call the functions in
+specific development and would like to call the functions in
 the shared libraries efficiently.
 
 The format of calls to the AmigaOS shared library functions differs
 substantially from the default function call format of C compilers
 (@pxref{Background}). Therefore, some tricks are necessary if you want
 to use these functions.
-
-The format of calls used in the current development versions of p.OS
-is much more similar to the call format of C compilers
-(@pxref{Internals}), nevertheless some tricks are still necessary.
 
 @samp{FD2InLine} is a parser that converts @samp{fd} files and
 @samp{clib} files to @samp{GCC inlines}.
@@ -79,7 +75,7 @@ contained therein, producing an output file suitable for use with the
 
 This output file contains so-called @dfn{inlines} --- one for each
 function entry. Using them, @samp{GCC} can produce very efficient code
-for making function calls to the AmigaOS and p.OS shared libraries.
+for making function calls to the AmigaOS shared libraries.
 
 @quotation
 @emph{Note:} the term @samp{inlines} is misleading ---
@@ -110,7 +106,7 @@ The installation is very easy, so there is no Installer script :-).
 If you have an older version of the @samp{inlines} installed, please
 remove it now, or you might encounter problems later. Typically, you
 will have to remove the following subdirectories of the
-@file{os-include} directory: @file{inline}, @file{pragmas} and
+@file{include} directory: @file{inline}, @file{pragmas} and
 @file{proto}.
 
 Next, please change your current directory to @file{GG:} (or
@@ -132,17 +128,16 @@ This chapter describes two aspects of using @samp{FD2InLine}:
 * Using fd2inline::  Creating @samp{inlines}.
 @end menu
 
-@node Using inlines, Using fd2inline, Usage, Usage
+@node Using inlines, Using fd2inline, Using fd2inline, Usage
 @section Using inlines
 @cindex Using inlines
 @cindex Making efficient calls
 
 @menu
 * Using inlines under AmigaOS::
-* Using inlines under p.OS::
 @end menu
 
-@node Using inlines under AmigaOS, Using inlines under p.OS, Using inlines, Using inlines
+@node Using inlines under AmigaOS, , Using inlines, Using inlines
 @subsection Using inlines under AmigaOS
 @cindex Using inlines under AmigaOS
 
@@ -217,49 +212,7 @@ startup code) you might prefer dereferencing @code{0x00000004}. To do
 this, define @code{_USEOLDEXEC_} before including @file{proto/exec.h}.
 @end table
 
-@node Using inlines under p.OS, , Using inlines under AmigaOS, Using inlines
-@subsection Using inlines under p.OS
-@cindex Using inlines under p.OS
-
-Using @samp{inlines} under p.OS is just as simple as under AmigaOS.
-The equivalent of the source presented in the previous section
-(@pxref{Using inlines under AmigaOS}) would look like this:
-
-@example
-#include <pclib/pDos_protos.h>
-
-int main(void)
-@{
-   pOS_DosDelay(100); /* Wait for 2 seconds */
-@}
-@end example
-
-One significant difference is that one should @emph{always} include
-@file{pclib} files, not @file{pProto} files --- just opposite to
-AmigaOS.
-
-@cindex Preprocessor symbols under p.OS
-There are two preprocessor symbols which alter the behaviour of the
-@samp{pInline} files:
-
-@table @code
-@cindex __<library>_BASE_NAME
-@item __<library>_BASE_NAME
-Function definitions in the @samp{pInline} files refer to the library
-base variable through the @code{__<library>_BASE_NAME} symbol (e.g.,
-@code{__INTUI_BASE_NAME} for @samp{pintui.library}). At the top of the
-@samp{pInline} file, this symbol is redefined to the appropriate
-library base variable name (e.g., @code{gb_IntuiBase}), @emph{unless}
-it has been already defined. This way, you can make the @samp{inlines}
-use a field of a structure as a library base, for example.
-
-@cindex __<library>_LIB_NAME
-@item __<library>_LIB_NAME
-This symbol is defined in the same way as the previous one, and it
-serves similar purpose. @xref{p.OS format}, for more information.
-@end table
-
-@node Using fd2inline, , Using inlines, Usage
+@node Using fd2inline, Using inlines, Using inlines, Usage
 @section Using fd2inline
 @cindex Using FD2Inline
 @cindex Creating inlines
@@ -304,9 +257,6 @@ Produce @samp{proto} file. If this option is specified, providing
 @samp{fd} file and will generate a @samp{proto} file, to be put in
 @file{include/proto} directory.
 
-@item --pos
-Produce p.OS @samp{inlines}.
-
 @item --version
 Print version information and exit.
 @end table
@@ -334,7 +284,7 @@ nonstandard naming convention. @samp{FD2InLine} will warn you if it
 finds such a function. There is an array of such exceptions in
 @samp{FD2InLine} source code. You should add the name of this function
 there and send a patch to @samp{FD2InLine} maintainer
-(@pxref{Authors}), for inclussion in the next release of
+(@pxref{Authors}), for inclusion in the next release of
 @samp{FD2InLine}.
 
 @samp{FD2InLine} assumes that the type of the base variable is
@@ -352,8 +302,7 @@ In addition to creating @samp{inlines} you must also create a
 
 The easiest way to do it is to call @samp{FD2InLine} with
 @samp{--proto} option. Most often, the generated file will be ready to
-use. Unfortunately, some libraries (like, for example,
-@samp{dos.library}) have broken header files and @samp{GCC} generates
+use. Unfortunately, some libraries have broken header files and @samp{GCC} generates
 warning messages if you try to use them. To avoid these warnings, you
 have to include various headers in the @samp{proto} file before
 including the @samp{clib} file.
@@ -411,9 +360,8 @@ and so on.
 
 Please note that the @samp{fd} files should be available in one of the
 standard locations. For the AmigaOS @samp{fd} files, this is one of:
-@file{GG:os-lib/fd/amigaos}, @file{GG:os-lib/fd}, @file{FD:}. For p.OS
-@samp{fd} files, this is one of @file{GG:os-lib/fd/pos},
-@file{P:/pOS_FD}. The exact location is determined by the
+@file{GG:os-lib/fd/amigaos}, @file{GG:os-lib/fd}, @file{FD:}.
+The exact location is determined by the
 @samp{configure} script. If it doesn't find the @samp{fd} files, it
 will disable the @file{Makefile} rules that build the @samp{inlines}.
 
@@ -426,20 +374,17 @@ make install
 This will install @samp{fd2inline}, the @samp{inlines} and the
 documentation in the appropriate subdirectories of @file{GG:}.
 
-The @file{fd2inline-@value{version}-src.lha} archive contains four
+The @file{fd2inline-@value{version}-src.lha} archive contains three
 patches in unified diff format, in directory @file{patches}. They fix
-bugs in AmigaOS 3.1 headers and @samp{fd} files. Without applying
-@file{amigaguide_lib.fd.diff} to @samp{amigaguide.library} @samp{fd}
-file, the produced @samp{inlines} will be broken. Applying
-@file{timer.h.diff} to @file{devices/timer.h} will prevent collision
-with IXEmul's @file{sys/time.h}. Two other patches rename an argument
-name from @code{true} to @code{tf}, since @code{true} is a reserved
-word in @samp{C++}. Use @code{patch} to apply these patches, for
-example:
+bugs in AmigaOS 3.9 headers. Applying @file{timer.h.diff} to
+@file{devices/timer.h} will prevent collision with IXEmul's
+@file{sys/time.h}. @file{hdwrench.h.diff} disables @samp{SAS/C} style
+prototypes in @file{libraries/hdwrench.h} for @samp{GCC}. Use @code{patch} to
+apply these patches, for example:
 
 @example
-cd GG:os-lib/fd
-patch amigaguide_lib.fd <amigaguide_lib.fd.diff
+cd GG:os-include/devices
+patch timer.h <timer.h.diff
 @end example
 
 @samp{GeekGadgets} distribution contains more complete set of patches.
@@ -467,7 +412,6 @@ This chapter describes the implementation details of @samp{inlines}.
 * Background::    Function calls in AmigaOS shared libraries.
 * Old format::    Inlines that use @code{__inline}.
 * New format::    Inlines that use the preprocessor.
-* p.OS format::   Inlines used for p.OS.
 * Stubs format::  Not really inlines, but...
 @end menu
 
@@ -546,13 +490,16 @@ OpenAmigaGuideA(BASE_PAR_DECL struct NewAmigaGuide *nag, struct TagItem *attrs)
 @{
    BASE_EXT_DECL
    register APTR res __asm("d0");
+   register int _d1 __asm("d1");
+   register int _a0 __asm("a0");
+   register int _a1 __asm("a1");
    register struct Library *a6 __asm("a6") = BASE_NAME;
    register struct NewAmigaGuide *a0 __asm("a0") = nag;
    register struct TagItem *a1 __asm("a1") = attrs;
    __asm volatile ("jsr a6@@(-0x36:W)"
-   : "=r" (res)
+   : "=r" (res), "=r" (_d1), "=r" (_a0), "=r" (_a1)
    : "r" (a6), "r" (a0), "r" (a1)
-   : "d0", "d1", "a0", "a1", "cc", "memory");
+   : "fp0", "fp1", "cc", "memory");
    return res;
 @}
 @end example
@@ -663,7 +610,7 @@ Because of these drawbacks, @samp{varargs inlines} can be disabled by
 defining @code{NO_INLINE_STDARG} before including a @samp{proto} file.
 In such a case, you will need a library with function stubs.
 
-@node New format, p.OS format, Old format, Internals
+@node New format, , Old format, Internals
 @section New format
 @cindex New inlines format
 
@@ -678,21 +625,24 @@ As you can see, this implementation is much more compact. The
 which is included at the beginning of every @samp{inline} file.
 
 @example
-#define LP2(offs, rt, name, t1, v1, r1, t2, v2, r2, bt, bn) \
-(@{							\
-   t1 _##name##_v1 = (v1);				\
-   t2 _##name##_v2 = (v2);				\
-   @{							\
-      register rt _##name##_re __asm("d0");		\
-      register struct Library *const _##name##_bn __asm("a6") = (struct Library*)(bn);\
-      register t1 _n1 __asm(#r1) = _##name##_v1;	\
-      register t2 _n2 __asm(#r2) = _##name##_v2;	\
-      __asm volatile ("jsr a6@@(-"#offs":W)"		\
-      : "=r" (_##name##_re)				\
-      : "r" (_##name##_bn), "r"(_n1), "r"(_n2)		\
-      : "d0", "d1", "a0", "a1", "cc", "memory");	\
-      _##name##_re;					\
-   @}							\
+#define LP2(offs, rt, name, t1, v1, r1, t2, v2, r2, bt, bn)	\
+(@{								\
+   t1 _##name##_v1 = (v1);					\
+   t2 _##name##_v2 = (v2);					\
+   (@{								\
+      register int _d1 __asm("d1");				\
+      register int _a0 __asm("a0");				\
+      register int _a1 __asm("a1");				\
+      register rt _##name##_re __asm("d0");			\
+      register void *const _##name##_bn __asm("a6") = (bn); 	\
+      register t1 _n1 __asm(#r1) = _##name##_v1;		\
+      register t2 _n2 __asm(#r2) = _##name##_v2;		\
+      __asm volatile ("jsr a6@@(-"#offs":W)"			\
+      : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
+      : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2)		\
+      : "fp0", "fp1", "cc", "memory");				\
+      _##name##_re;						\
+   @});								\
 @})
 @end example
 
@@ -761,53 +711,7 @@ base pointer) is provided for backwards compatibility. Actually, there
 are more unnecessary arguments, like function and argument names, but
 it was decided to leave them in peace.
 
-@node p.OS format, Stubs format, New format, Internals
-@section p.OS format
-@cindex p.OS inlines format
-@cindex Function calls format in p.OS shared libraries
-
-p.OS uses a different calling convention than AmigaOS. The most
-fundamental difference is that, despite the information contained in
-the @samp{fd} files, the arguments are passed on the stack, not in the
-CPU registers.
-
-@example
-#define pOS_AllocAudioMapA(channel, par2) \
-	__INLINE_FUN_2(__AUDIO_BASE_NAME, __AUDIO_LIB_NAME, 0x12c, __ARID__ struct pOS_AudioMap*, pOS_AllocAudioMapA, \
-	ULONG, channel, __INLINE_REG_D0, const struct pOS_TagItem*, par2, __INLINE_REG_A0)
-@end example
-
-As you can see, the p.OS @samp{inlines} format largely resembles the
-new @samp{inlines} format (@pxref{New format}). The most important
-difference is that all the preprocessor symbols are now prefixed with
-two underscores @code{__}, in order to prevent user namespace
-polution, as required by @samp{ANSI C}.
-
-@example
-#define __INLINE_FUN_2(__base, __lib, __offs, __type, __name, __type1, __name1, __reg1, __type2, __name2, __reg2) \
-((__type (*)(void*, __type1, __type2)) \
-*(ULONG*)(((char*)__lib)-__offs))(__base, __name1, __name2)
-@end example
-
-The actual implementation is very simple: no @samp{GNU CC}-specific
-features are used, every @samp{ANSI C}-compatible compiler should be
-able to use this inlines format.
-
-As you might have already noticed, the register names are passed, but
-not used. As mentioned earlier in this section, p.OS does not pass the
-arguments in registers. However, since it is not clear if it will
-continue to do so, it was decided to pass this redundant information.
-
-Another difference when compared to AmigaOS is that p.OS supports
-library jump tables separated from the library bases. As of this
-writing, this is only the case of @samp{pexec.library}, where the base
-pointer is identified by @code{gb_ExecBase}, and the jump table by
-@code{gb_ExecLib}, both of which are obtained form the
-@code{gb_DosBase}, passed to every application invoked. For this
-reason, p.OS @samp{inlines} provide two preprocessor symbols for
-library identification (@pxref{Using inlines under p.OS}).
-
-@node Stubs format, , p.OS format, Internals
+@node Stubs format, , , Internals
 @section Stubs format
 @cindex Stubs inlines format
 
@@ -832,6 +736,32 @@ stubs (@pxref{Using fd2inline}).
 @chapter History
 @cindex History
 @cindex What has changed
+
+Version 1.32,  September 16th, 2007,  Christian Sauer
+@itemize @bullet
+@item
+Removed support for p.OS.
+@item
+Reworked patches for AmigaOS 3.9 includes.
+@item
+Added @samp{CamdBase}, @samp{DisassemblerBase}, @samp{HDWBase},
+@samp{MC68040Base}, @samp{MC68060Base}, @samp{MC680x0Base}, @samp{MemoryBase}
+and @samp{MMUBase} to array of base variable types.
+@item
+Added support for varargs function of @samp{socket.library} with nonstandard
+naming convention.
+@item
+Fixed a bug in parsing of prototypes where a @samp{C} comment was at the end
+of the line or one line above with preceding whitespace.
+@item
+Added support for WarpOS and PowerUP to @file{inline/macros.h}.
+@item
+Inlines for functions with more than one parameter of type pointer to function
+are now valid atleast (@code{void *} used).
+@item
+Fixed broken constructs in @file{inline/macros.h}, @file{inline/strsup.h} and
+production of old format inlines for @samp{GCC 3.x}.
+@end itemize
 
 Version 1.21,  March 22nd, 1998,  Kamil Iskra
 @itemize @bullet
@@ -927,21 +857,21 @@ F. Trunz took over its development and ``improved, updated, simply
 made it workable'' (quotation from the change log). It still contained
 quite a few bugs, though.
 
-In more-or-less the same time, I started a discussion on the
+In more-or-less the same time, Kamil Iskra started a discussion on the
 @samp{amiga-gcc-port} mailing list about improving the quality of
 @samp{inlines}. The most important idea came from Matthias Fleischer,
 who introduced the new format of @samp{inlines} (@pxref{New format}).
-Since I started the discussion, I volunteered to make improvements to
+Since Kamil Iskra started the discussion, he volunteered to make improvements to
 the @samp{inlines} parser. Having no idea about programming in
-@samp{Perl}, I decided to modify the parser written in @samp{C}. I
-fixed all the bugs known to me, added some new features, and wrote
+@samp{Perl}, he decided to modify the parser written in @samp{C}. He
+fixed all the bugs known to him, added some new features, and wrote
 this terribly long documentation :-).
 
 Not all of the files distributed in the @samp{FD2InLine} archives were
-created by me or @samp{FD2InLine}. Most of the files in
+created by Kamil Iskra or @samp{FD2InLine}. Most of the files in
 @file{include-src/proto} and @file{include-src/inline} (@file{alib.h},
-@file{strsub.h} and @file{stubs.h}) were written by Gunther Nikl (with
-some modifications by Joerg Hoehle and me).
+@file{strsup.h} and @file{stubs.h}) were written by Gunther Nikl (with
+some modifications by Joerg Hoehle and Kamil Iskra).
 
 If you have any comments concerning this work, please write to:
 
@@ -949,35 +879,6 @@ gg-gcc@@ninemoons.com
 
 This is a list to which most of the @samp{GeekGadgets} developers and
 activists subscribe, so you are practically guaranteed to get a reply.
-
-However, if, for some reason, you want to contact me personally, you
-can do so in one of the following ways:
-
-@itemize @bullet
-@item
-E-mail (preferred :-):
-
-iskra@@student.uci.agh.edu.pl
-
-Should be valid until October 1999 (at least I hope so :-).
-
-@item
-Snail-mail (expect to wait long for a reply :-):
-
-@format
-Kamil Iskra
-Luzycka 51/258
-30-658 Krakow
-Poland
-@end format
-@end itemize
-
-Latest version of this package should always be available on my WWW
-page:
-
-@format
-http://student.uci.agh.edu.pl/~iskra
-@end format
 
 @node Index, , Authors, Top
 @chapter Index

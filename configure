@@ -868,7 +868,7 @@ case "$CC" in
     LD=${LD-mwld}
     RANLIB=${RANLIB-true};;
   mwcc )
-    CC="mwcc -I- -I. -I/boot/apps/GeekGadgets/include -L/boot/apps/GeekGadgets/lib -opt global -nodup"
+    CC="mwcc -I- -I. -I/boot/apps/GeekGadgets/include -L/boot/apps/GeekGadgets/lib -nodup"
     AR=${AR-mwld}
     LD=${LD-mwld}
     RANLIB=${RANLIB-true};;
@@ -1066,40 +1066,6 @@ else
   true
 fi
 
-echo $ac_n "checking for p.OS FD files""... $ac_c" 1>&6
-echo "configure:1071: checking for p.OS FD files" >&5
-pos_inlines=pos_inlines
-pos_fd_path='not found'
-if test -d $prefix/os-lib/fd/pos; then
-  pos_fd_path=$prefix/os-lib/fd/pos
-elif test -d /p/../pOS_FD; then
-  pos_fd_path=/p/../pOS_FD
-else
-  pos_inlines=nop
-fi
-echo "$ac_t""$pos_fd_path" 1>&6
-
-pos_header_path='not found'
-if test $pos_inlines != nop; then
-  echo $ac_n "checking for p.OS headers""... $ac_c" 1>&6
-echo "configure:1086: checking for p.OS headers" >&5
-  if test -d $prefix/os-include/pos; then
-    pos_header_path=$prefix/os-include/pos
-  elif test -d $prefix/os-include/pExec; then
-    pos_header_path=$prefix/os-include
-  elif test -d /p; then
-    pos_header_path=/p
-  else
-    { echo "configure: error: not found" 1>&2; exit 1; }
-  fi
-  echo "$ac_t""$pos_header_path" 1>&6
-else
-  true
-fi
-
-
-
-
 
 
 
@@ -1266,9 +1232,6 @@ s%@AWK@%$AWK%g
 s%@amigaos_inlines@%$amigaos_inlines%g
 s%@amigaos_fd_path@%$amigaos_fd_path%g
 s%@amigaos_header_path@%$amigaos_header_path%g
-s%@pos_inlines@%$pos_inlines%g
-s%@pos_fd_path@%$pos_fd_path%g
-s%@pos_header_path@%$pos_header_path%g
 
 CEOF
 EOF

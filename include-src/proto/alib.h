@@ -7,4 +7,4 @@
 #include <inline/alib.h>
 #endif /* __GNUC__ */
 
-#endif /* PROTO_ALIB_H */
+#endif /* !PROTO_ALIB_H */

@@ -20,4 +20,4 @@
   _NewList_list->lh_Tail = 0;						\
 })
 
-#endif /* _INLINE_ALIB_H */
+#endif /* !_INLINE_ALIB_H */

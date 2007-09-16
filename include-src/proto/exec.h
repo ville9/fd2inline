@@ -1,22 +1,6 @@
 #ifndef PROTO_EXEC_H
 #define PROTO_EXEC_H
 
-#ifndef EXEC_IO_H
-#include <exec/io.h>
-#endif /* !EXEC_IO_H */
-#ifndef EXEC_MEMORY_H
-#include <exec/memory.h>
-#endif /* !EXEC_MEMORY_H */
-#ifndef EXEC_DEVICES_H
-#include <exec/devices.h>
-#endif /* !EXEC_DEVICES_H */
-#ifndef EXEC_PORTS_H
-#include <exec/ports.h>
-#endif /* !EXEC_PORTS_H */
-#ifndef EXEC_SEMAPHORES_H
-#include <exec/semaphores.h>
-#endif /* !EXEC_SEMAPHORES_H */
-
 #include <clib/exec_protos.h>
 
 #ifdef __GNUC__

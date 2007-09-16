@@ -1,0 +1,18 @@
+--- hdwrench.h.orig	Mon May  7 12:36:32 2001
++++ hdwrench.h	Wed Jul 17 13:29:13 2002
+@@ -327,6 +327,7 @@
+ 
+ 
+ /* Function Definitions */
++#ifndef __GNUC__
+ BOOL __saveds __asm				 FindControllerID ( register __a0 char *devname,
+ 													register __a1 ULONG *selfid );
+ ULONG __saveds __asm			 FindDefaults ( register __d0 USHORT Optimize,
+@@ -384,6 +385,7 @@
+ 																	   ( register __a0 HDWCallbackMsg *msg ));
+ ULONG __saveds __asm			 VerifyDrive ( register __a0 long ( * __asm CallBack)
+ 																	( register __a0 HDWCallbackMsg *msg ));
++#endif  //  __GNUC__
+ 
+ 
+ 

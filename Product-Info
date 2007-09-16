@@ -21,14 +21,15 @@ inlines, one for each function entry.  Using them, GCC can produce
 very efficient code for making function calls to Amiga shared
 libraries.
 .version
-1.11
+1.32
 .author
-Kamil Iskra
+Original author: Kamil Iskra
+Interim maintainer: Christian Sauer
 .distribution
 GNU Public License
 .source
 Includes source in C.
 .described-by
-Fred Fish (fnf@ninemoons.com)
+Fred Fish (fnf@geekgadgets.org)
 .submittal
 Received via ftp directly from the author.
