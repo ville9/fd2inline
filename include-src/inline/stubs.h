@@ -138,4 +138,4 @@ struct cprlist;
 struct gpLayout;
 struct dtPrint;
 
-#endif /* __INLINE_STUB_H */
+#endif /* !__INLINE_STUB_H */

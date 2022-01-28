@@ -1,10 +1,6 @@
 #ifndef PROTO_GRAPHICS_H
 #define PROTO_GRAPHICS_H
 
-#ifndef GRAPHICS_SCALE_H
-#include <graphics/scale.h>
-#endif /* !GRAPHICS_SCALE_H */
-
 #include <clib/graphics_protos.h>
 
 #ifdef __GNUC__

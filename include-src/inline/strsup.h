@@ -1,18 +1,22 @@
-#if !defined(_STRSUP_H) && defined(__OPTIMIZE__)
+#if !defined(_STRSUP_H) && !defined(__PPC__) && defined(__OPTIMIZE__)
 
 #define _STRSUP_H
 
 #include <sys/types.h>
 
 extern __inline__ void *memcpy(void *s1,const void *s2,size_t n)
-{ register char *a6 __asm("a6") = *(char **)4;
+{ register int _d0 __asm("d0");
+  register int _d1 __asm("d1");
+  register int _a0 __asm("a0");
+  register int _a1 __asm("a1");
+  register char *a6 __asm("a6") = *(char **)4;
   register const void *a0 __asm("a0") = s2;
   register const void *a1 __asm("a1") = s1;
   register size_t d0 __asm("d0") = n;
   __asm __volatile ("jsr a6@(-0x270)"
-  : /* no output */
+  : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)
   : "r" (a6), "r" (a0), "r" (a1), "r" (d0)
-  : "a0","a1","d0","d1", "memory");
+  : "fp0", "fp1", "cc", "memory");
 
   return s1;
 }
@@ -178,6 +182,6 @@ extern __inline__ char *stpcpy(char *dst,char *src)
 
 #elif !defined(__OPTIMIZE__)
 
-#define strlen_plus_one(s) strlen(s)+1L
+#define strlen_plus_one(s) (strlen(s)+1L)
 
-#endif /* _STRSUP_H */
+#endif /* !_STRSUP_H && !__PPC__ && __OPTIMIZE__ */

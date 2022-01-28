@@ -18,6 +18,8 @@
  *
  * Version 0.99b and later by Kamil Iskra.
  *
+ * Version 1.22 and later by Christian Sauer.
+ *
  ******************************************************************************/
 
 #include <ctype.h>
@@ -34,7 +36,7 @@
  * if you use this code, please leave a little origin note.
  ******************************************************************************/
 
-const static char version_str[]="$VER: fd2inline " VERSION " (22.03.98)";
+const static char version_str[]="$VER: fd2inline " VERSION " (16.09.07)";
 
 /******************************************************************************
  * These are general definitions including types for defining registers etc.
@@ -65,7 +67,7 @@ typedef unsigned long ulong;
 
 typedef enum { false, nodef, real_error } Error;
 
-enum {NEW, OLD, STUBS, PROTO, POS} output_mode=NEW;
+enum {NEW, OLD, STUBS, PROTO} output_mode=NEW;
 
 char BaseName[32], BaseNamU[32],  BaseNamL[32];
 
@@ -73,12 +75,15 @@ const static char *LibExcTable[]=
 {
 	"BattClockBase",			"Node",
 	"BattMemBase",				"Node",
+	"CamdBase",					"CamdBase",
 	"ConsoleDevice",			"Device",
+	"DisassemblerBase",				"DisassemblerBase",
 	"DiskBase",					"DiskResource",
 	"DOSBase",					"DosLibrary",
 	"SysBase",					"ExecBase",
 	"ExpansionBase",			"ExpansionBase",
 	"GfxBase",					"GfxBase",
+	"HDWBase",					"HDWLibrary",
 	"InputBase",				"Device",
 	"IntuitionBase",			"IntuitionBase",
 	"LocaleBase",				"LocaleBase",
@@ -86,7 +91,12 @@ const static char *LibExcTable[]=
 	"MathIeeeDoubTransBase","MathIEEEBase",
 	"MathIeeeSingBasBase",	"MathIEEEBase",
 	"MathIeeeSingTransBase","MathIEEEBase",
+	"MemoryBase",					"MemoryLibrary",
 	"MiscBase",					"Node",
+	"MC68040Base",					"MC68040Base",
+	"MC68060Base",					"MC68060Base",
+	"MC680x0Base",					"MC680x0Base",
+	"MMUBase",					"MMUBase",
 	"PotgoBase",				"Node",
 	"RamdriveDevice",			"Device",
 	"RealTimeBase",			"RealTimeBase",
@@ -136,33 +146,13 @@ RegStr(regs reg)
 	{
 		"d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7",
 		"a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "illegal"
-	},
-	*posregs[]=
-	{
-		"__INLINE_REG_D0",
-		"__INLINE_REG_D1",
-		"__INLINE_REG_D2",
-		"__INLINE_REG_D3",
-		"__INLINE_REG_D4",
-		"__INLINE_REG_D5",
-		"__INLINE_REG_D6",
-		"__INLINE_REG_D7",
-		"__INLINE_REG_A0",
-		"__INLINE_REG_A1",
-		"__INLINE_REG_A2",
-		"__INLINE_REG_A3",
-		"__INLINE_REG_A4",
-		"__INLINE_REG_A5",
-		"__INLINE_REG_A6",
-		"__INLINE_REG_A7",
-		"illegal"
 	};
 
 	if (reg>illegal)
 		reg=illegal;
 	if (reg<d0)
 		reg=d0;
-	return (output_mode!=POS ? aosregs[reg] : posregs[reg]);
+	return aosregs[reg];
 }
 
 /******************************************************************************
@@ -269,7 +259,7 @@ fF_SetError(fdFile* obj, Error error)
 		illparams("fF_SetError");
 }
 
-#define FUNCTION_GAP (output_mode!=POS ? 6 : 12)
+#define FUNCTION_GAP (6)
 
 static INLINE void
 fF_SetOffset(fdFile* obj, long at)
@@ -344,6 +334,8 @@ fF_readln(fdFile* obj)
 				obj->line[0]='\0';
 				return real_error;
 			}
+			while (isblank(*low))
+				low++;
 			if (low==strpbrk(low, "*#/"))
 			{
 				DBP(fprintf(stderr, "in# %s\n", obj->line));
@@ -356,7 +348,7 @@ fF_readln(fdFile* obj)
 				bpoint--;
 				len--;
 			}
-			if (*bpoint==';' || *bpoint==')')
+			if (*bpoint==';' || *bpoint==')' || *bpoint=='/')
 			{
 				DBP(fprintf(stderr, "\nin: %s\n", obj->line));
 				return false;
@@ -431,7 +423,7 @@ fF_FuncName(fdFile* obj)
 	{
 		if (!isalnum(*lower) && !isspace(*lower) && *lower!='*' && *lower!=','
 		&& *lower!='.' && *lower!=';' && *lower!='(' && *lower!=')' &&
-		*lower!='[' && *lower!=']' && *lower!='_' && *lower!='\\')
+		*lower!='[' && *lower!=']' && *lower!='_' && *lower!='\\' && *lower!='/')
 		{
 			fF_SetError(obj, nodef);
 			return NULL;
@@ -831,14 +823,9 @@ fD_NewProto(fdDef* obj, shortcard at, char* newstr)
 				return 1;
 			t++;
 			end=strchr(t, ')');
-			if (output_mode!=POS)
-			{
-				memmove(t+2, end, strlen(end)+1);
-				*t='%';
-				t[1]='s';
-			}
-			else
-				memmove(t, end, strlen(end)+1);
+			memmove(t+2, end, strlen(end)+1);
+			*t='%';
+			t[1]='s';
 		}
 
 		if (NewString(&pr, arr))
@@ -1223,7 +1210,7 @@ fD_adjustargnames(fdDef *obj)
 {
 	int parnum;
 
-	if (output_mode!=NEW && output_mode!=POS)
+	if (output_mode!=NEW)
 		return;
 
 	/* For #define-base output mode, we have to check if argument names are not
@@ -1321,10 +1308,6 @@ fD_parsepr(fdDef* obj, fdFile* infile)
 			while (*bpoint && (*bpoint==' ' || *bpoint=='\t')) /* ignore spaces */
 				bpoint++;
 
-			if (!obraces && output_mode==POS && strncmp(bpoint, "_R_", 3)==0 &&
-			isalnum(bpoint[3]) && isalnum(bpoint[4]) && isspace(bpoint[5]))
-				lowarg=bpoint+5;
-
 			bnext=strpbrk(bpoint, "(),");
 
 			if (bnext)
@@ -1334,12 +1317,16 @@ fD_parsepr(fdDef* obj, fdFile* infile)
 					case '(':
 						if (!obraces)
 						{
-							if (fD_GetFuncParNum(obj)!=illegal &&
-							fD_GetFuncParNum(obj)!=count)
-								fprintf(stderr, "Warning: two parameters of type "
-									"pointer to function are used.\nThis is not "
-									"supported!\n");
-							fD_SetFuncParNum(obj, count);
+							if (fD_GetFuncParNum(obj)!=illegal && fD_GetFuncParNum(obj)!=count)
+							{
+								if (strcmp(lowarg, "void *"))
+									fprintf(stderr, "Warning: two parameters of type "
+										"pointer to function are used.\nThis is not "
+										"supported!\n");
+								lowarg="void *";
+							}
+							else
+								fD_SetFuncParNum(obj, count);
 						}
 						obraces++;
 						DBP(fprintf(stderr, "< (%ld%s >", obraces, bnext));
@@ -1433,6 +1420,7 @@ const static char *TagExcTable[]=
 	"VFWritef",					"FWritef",
 	"VFPrintf",					"FPrintf",
 	"VPrintf",					"Printf",
+	"vsyslog",					"syslog",
 };
 
 const char*
@@ -1440,7 +1428,6 @@ taggedfunction(const fdDef* obj)
 {
 	shortcard numregs=fD_RegNum(obj);
 	unsigned int count;
-	int aos_tagitem;
 	const char *name=fD_GetName(obj);
 	static char newname[200];	/* Hope will be enough... static because used
 											out of the function. */
@@ -1470,7 +1457,7 @@ taggedfunction(const fdDef* obj)
 			return NULL;
 
 	lastarg=fD_GetProto(obj, numregs-1);
-	if (strncmp(lastarg, "const", 5)==0)
+	if (strncmp(lastarg, "CONST", 5)==0 || strncmp(lastarg, "const", 5)==0)
 		lastarg+=5;
 	while (*lastarg==' ' || *lastarg=='\t')
 		lastarg++;
@@ -1479,11 +1466,9 @@ taggedfunction(const fdDef* obj)
 	lastarg+=6;
 	while (*lastarg==' ' || *lastarg=='\t')
 		lastarg++;
-	aos_tagitem=1;
-	if (strncmp(lastarg, "TagItem", 7) &&
-	(output_mode!=POS || ((aos_tagitem=strncmp(lastarg, "pOS_TagItem", 11))!=0)))
+	if (strncmp(lastarg, "TagItem", 7))
 		return NULL;
-	lastarg+=(aos_tagitem ? 7 : 11);
+	lastarg+=7;
 	while (*lastarg==' ' || *lastarg=='\t')
 		lastarg++;
 	if (strcmp(lastarg, "*"))
@@ -1509,6 +1494,7 @@ aliasfunction(const char* name)
 		"CreateNewProc",	"CreateNewProcTagList",
 		"NewLoadSeg",		"NewLoadSegTagList",
 		"System",			"SystemTagList",
+		"muCheckPasswd",	"muCheckPasswdTagList"
 	};
 	unsigned int count;
 	for (count=0; count<sizeof AliasTable/sizeof AliasTable[0]; count++)
@@ -1539,11 +1525,13 @@ fD_write(FILE* outfile, const fdDef* obj)
 	{
 		const char *reg=fD_GetRegStr(obj, count);
 		if (strcmp(reg, "a4")==0 || strcmp(reg, "a5")==0)
+		{
 			if (!a45)
 				a45=(strcmp(reg, "a4") ? 5 : 4); /* set flag */
 			else /* Security check */
 				fprintf(stderr, "Warning: both a4 and a5 are used. This is not "
 					"supported!\n");
+		}
 		if (strcmp(reg, "d7")==0) /* Used only when a45!=0 */
 			d7=1;
 	}
@@ -1560,7 +1548,7 @@ fD_write(FILE* outfile, const fdDef* obj)
 		return;
 	}
 
-	if (output_mode==NEW || output_mode==POS)
+	if (output_mode==NEW)
 	{
 		fprintf(outfile, "#define %s(", name);
 
@@ -1570,10 +1558,7 @@ fD_write(FILE* outfile, const fdDef* obj)
 				fprintf(outfile, "%s, ", fD_GetParam(obj, count));
 			fprintf(outfile, "%s", fD_GetParam(obj, count));
 		}
-	}
 
-	if (output_mode==NEW)
-	{
 		fprintf(outfile, ") \\\n\tLP%d%s%s%s%s(0x%lx, ", numregs,
 			(vd ? "NR" : ""), (a45 ? (a45==4 ? "A4" : "A5") : ""),
 			(BaseName[0] ? "" : "UB"),
@@ -1601,19 +1586,6 @@ fD_write(FILE* outfile, const fdDef* obj)
 		}
 		fprintf(outfile, ")\n\n");
 	}
-	else if (output_mode==POS)
-	{
-		fprintf(outfile, ") \\\n\t__INLINE_FUN_%d(", numregs);
-		fprintf(outfile, "__%s_BASE_NAME, __%s_LIB_NAME, 0x%lx, %s, %s%s",
-			BaseNamU, BaseNamU, -fD_GetOffset(obj), rettype, name,
-			(numregs ? ", \\\n\t" : ""));
-
-		for (count=d0; count<numregs; count++)
-			fprintf(outfile, "%s, %s, %s%s", fD_GetProto(obj, count),
-				fD_GetParam(obj, count), fD_GetRegStr(obj, count),
-				(count==numregs-1 ? "" : ", "));
-		fprintf(outfile, ")\n\n");
-	}
 	else
 	{
 		fprintf(outfile, "%s__inline %s\n%s(%s",
@@ -1633,9 +1605,14 @@ fD_write(FILE* outfile, const fdDef* obj)
 		}
 
 		fprintf(outfile, ")\n{\n%s", (BaseName[0] ? "   BASE_EXT_DECL\n" : ""));
-		if (!vd)
+		if (vd)
+			fprintf(outfile, "   register int _d0 __asm(\"d0\");\n");
+		else
 			fprintf(outfile, "   register %s%sres __asm(\"d0\");\n", rettype,
 				(*(rettype+strlen(rettype)-1)=='*' ? "" : " "));
+		fprintf(outfile, "   register int _d1 __asm(\"d1\");\n"
+			"   register int _a0 __asm(\"a0\");\n"
+			"   register int _a1 __asm(\"a1\");\n");
 
 		if (BaseName[0])
 			fprintf(outfile, "   register struct %s *a6 __asm(\"a6\") = BASE_NAME;\n",
@@ -1669,9 +1646,9 @@ fD_write(FILE* outfile, const fdDef* obj)
 			fprintf(outfile, "   __asm volatile (\"jsr a6@(-0x%lx:W)\"\n",
 				-fD_GetOffset(obj));
 
-		fprintf(outfile, (vd ? "   : /* No Output */\n" : "   : \"=r\" (res)\n"));
+		fprintf(outfile, (vd ? "   : \"=r\" (_d0)" : "   : \"=r\" (res)"));
 
-		fprintf(outfile, "   : ");
+		fprintf(outfile, ", \"=r\" (_d1), \"=r\" (_a0), \"=r\" (_a1)\n   : ");
 		if (BaseName[0])
 			fprintf(outfile, "\"r\" (a6)%s", (numregs ? ", ": ""));
 
@@ -1682,7 +1659,7 @@ fD_write(FILE* outfile, const fdDef* obj)
 				chtmp="d7";
 			fprintf(outfile, "\"r\" (%s)%s", chtmp, (count<numregs-1 ? ", " : ""));
 		}
-		fprintf(outfile, "\n   : \"d0\", \"d1\", \"a0\", \"a1\", \"fp0\", \"fp1\"");
+		fprintf(outfile, "\n   : \"fp0\", \"fp1\"");
 
 		if (vd)
 			fprintf(outfile, ", \"cc\", \"memory\");\n}\n\n"); /* { */
@@ -1705,8 +1682,7 @@ fD_write(FILE* outfile, const fdDef* obj)
 	{
 		if (output_mode!=STUBS)
 		{
-			fprintf(outfile, "#ifndef %sNO_INLINE_STDARG\n#define %s(",
-				(output_mode==POS ? "__" : ""), tagname);
+			fprintf(outfile, "#ifndef NO_INLINE_STDARG\n#define %s(", tagname);
 
 			for (count=d0; count<numregs-1; count++)
 				fprintf(outfile, "a%d, ", count);
@@ -1717,8 +1693,8 @@ fD_write(FILE* outfile, const fdDef* obj)
 			for (count=d0; count<numregs-1; count++)
 				fprintf(outfile, "(a%d), ", count);
 
-			fprintf(outfile, "(%s)_tags);})\n#endif /* !%sNO_INLINE_STDARG */\n\n",
-				fD_GetProto(obj, fD_RegNum(obj)-1), (output_mode==POS ? "__" : ""));
+			fprintf(outfile, "(%s)_tags);})\n#endif /* !NO_INLINE_STDARG */\n\n",
+				fD_GetProto(obj, fD_RegNum(obj)-1));
 		}
 		else
 		{
@@ -1771,10 +1747,9 @@ fD_write(FILE* outfile, const fdDef* obj)
 int
 varargsfunction(const char* proto, const char* funcname)
 {
-	const char *end=proto+strlen(proto)-1;
-	while (isspace(*end))
-		end--;
-	if (*end--==';')
+	const char *end;
+
+	if ((end=strrchr(proto, ';')) && end--)
 	{
 		while (isspace(*end))
 			end--;
@@ -1848,8 +1823,8 @@ ishandleddifferently(const char* proto, const char* funcname)
 	funcname[5]>='0' && funcname[6]<='4')
 		return 1;
 
-	/* Finally, it can be intuition.library/ReportMouse1(). */
-	return !strcmp(funcname, "ReportMouse1");
+	/* Finally, it can be intuition.library/ReportMouse1() or datatypes.library/RefreshDTObjects(). */
+	return !strcmp(funcname, "ReportMouse1") || !strcmp(funcname, "RefreshDTObjects");
 }
 
 void
@@ -1862,7 +1837,6 @@ printusage(const char* exename)
 		"--old\t\tinline based\n"
 		"--stubs\t\tlibrary stubs\n"
 		"--proto\t\tbuild proto files (no clib-file required)\n"
-		"--pos\t\tfor p.OS\n"
 		"--version\tprint version number and exit\n", exename);
 }
 
@@ -1936,8 +1910,6 @@ main(int argc, char** argv)
 					output_mode=STUBS;
 				else if (strcmp(option, "proto")==0)
 					output_mode=PROTO;
-				else if (strcmp(option, "pos")==0)
-					output_mode=POS;
 				else if (strcmp(option, "version")==0)
 				{
 					fprintf(stderr, "fd2inline version " VERSION "\n");
@@ -2016,7 +1988,7 @@ main(int argc, char** argv)
 
 	qsort(arrdefs, count, sizeof arrdefs[0], fD_cmpName);
 
-	if (output_mode!=NEW && output_mode!=POS)
+	if (output_mode!=NEW)
 	{
 		unsigned int count2;
 		StdLib="Library";
@@ -2093,8 +2065,6 @@ main(int argc, char** argv)
 		strcpy(BaseNamU, BaseName);
 		if (strlen(BaseNamU)>4 && strcmp(BaseNamU+strlen(BaseNamU)-4, "Base")==0)
 			BaseNamU[strlen(BaseNamU)-4]='\0';
-		if (output_mode==POS && strncmp(BaseNamU, "gb_", 3)==0)
-			memmove(BaseNamU, &BaseNamU[3], strlen(&BaseNamU[3])+1);
 	}
 	StrUpr(BaseNamU);
 
@@ -2115,43 +2085,26 @@ main(int argc, char** argv)
 	{
 		fprintf(outfile,
 			"/* Automatically generated header! Do not edit! */\n\n"
-			"#ifndef %sINLINE_%s_H\n"
-			"#define %sINLINE_%s_H\n\n"
+			"#ifndef _INLINE_%s_H\n"
+			"#define _INLINE_%s_H\n\n"
 			"%s\n\n",
-			(output_mode==POS ? "__INC_POS_P" : "_"),
-			BaseNamU,
-			(output_mode==POS ? "__INC_POS_P" : "_"),
-			BaseNamU,
+			BaseNamU, BaseNamU,
 			(output_mode==NEW ?
 				"#ifndef __INLINE_MACROS_H\n"
 				"#include <inline/macros.h>\n"
 				"#endif /* !__INLINE_MACROS_H */" :
-				(output_mode==POS ?
-					"#ifndef __INC_POS_PINLINE_MACROS_H\n"
-					"#include <pInline/macros.h>\n"
-					"#endif /* !__INC_POS_PINLINE_MACROS_H */" :
-					"#ifndef __INLINE_STUB_H\n"
-					"#include <inline/stubs.h>\n"
-					"#endif /* !__INLINE_STUB_H */")));
+				"#ifndef __INLINE_STUB_H\n"
+				"#include <inline/stubs.h>\n"
+				"#endif /* !__INLINE_STUB_H */"));
 		if (BaseName[0])
 		{
-			if (output_mode==NEW || output_mode==POS)
+			if (output_mode==NEW)
 			{
 				fprintf(outfile,
-					"#ifndef %s%s_BASE_NAME\n"
-					"#define %s%s_BASE_NAME %s\n"
-					"#endif /* !%s%s_BASE_NAME */\n\n",
-					(output_mode==POS ? "__" : ""), BaseNamU,
-					(output_mode==POS ? "__" : ""), BaseNamU, BaseName,
-					(output_mode==POS ? "__" : ""), BaseNamU);
-				if (output_mode==POS)
-					fprintf(outfile,
-						"#ifndef __%s_LIB_NAME\n"
-						"#define __%s_LIB_NAME %s\n"
-						"#endif /* !__%s_LIB_NAME */\n\n",
-						BaseNamU, BaseNamU,
-						(strcmp(BaseName, "gb_ExecBase") ? BaseName : "gb_ExecLib"),
-						BaseNamU);
+					"#ifndef %s_BASE_NAME\n"
+					"#define %s_BASE_NAME %s\n"
+					"#endif /* !%s_BASE_NAME */\n\n",
+					BaseNamU, BaseNamU, BaseName, BaseNamU);
 			}
 			else
 				fprintf(outfile,
@@ -2186,8 +2139,7 @@ main(int argc, char** argv)
 					"#undef BASE_PAR_DECL\n"
 					"#undef BASE_PAR_DECL0\n"
 					"#undef BASE_NAME\n\n");
-		fprintf(outfile, "#endif /* !%sINLINE_%s_H */\n",
-			(output_mode==POS ? "__INC_POS_P" : "_"), BaseNamU);
+		fprintf(outfile, "#endif /* !_INLINE_%s_H */\n", BaseNamU);
 	}
 
 	free(arrdefs);
