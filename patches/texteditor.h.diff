@@ -1,0 +1,11 @@
+--- texteditor.h.orig	Tue Apr 13 02:41:06 2021
++++ texteditor.h	Sat Feb  5 10:20:27 2022
+@@ -221,7 +221,7 @@ struct LeftBarMouseMessage
+ 	UWORD Qualifier; /* copied from InputEvent */
+ 	WORD X;		/* mouse position relative to upper left corner of the leftbar area for this line */
+ 	WORD Y;
+-	struct timeval TimeStamp; /* copied from InputEvent */
++	TimeVal_Type TimeStamp; /* copied from InputEvent */
+ };
+ 
+ 

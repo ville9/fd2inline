@@ -33,7 +33,7 @@ LDFLAGS =		@LDFLAGS@
 PROTECT =		/c/protect
 
 # Used when building fd2inline, fd2inline.guide and the archives.
-VERSION =		1.32
+VERSION =		1.33
 
 AMIGAOS_FD_PATH =	@amigaos_fd_path@
 AMIGAOS_HEADER_PATH =	@amigaos_header_path@
@@ -46,8 +46,7 @@ BUILD_AMIGAOS_PROTOS =	stmp-built-amigaos-protos
 BUILD_AMIGAOS_LIBS =	stmp-built-amigaos-libs
 
 # List of linker libraries to build. Each entry is INCBASE!LIBBASE (see below).
-NONSTD_LIBS =		muimaster!mui ums!ums dospath!dospath \
-			screennotify!screennotify wbstart!wbstart
+NONSTD_LIBS =		muimaster!mui
 
 # Archive names.
 SRC_ARCHIVE_LHA =	fd2inline-$(VERSION)-src.lha
@@ -177,7 +176,7 @@ $(BUILD_AMIGAOS_INLINES): fd2inline
 			if [ -d include/inline ]; then true; else mkdir include/inline; fi
 			for fd in $(AMIGAOS_FD_PATH)/*.fd; do \
 			  rootname=`basename $$fd .fd | sed "s/_lib$$//"`; \
-			  if [ "$${rootname}" = "hdwrench" -o "$${rootname}" = "mathffp" -o "$${rootname}" = "mathtrans" ]; then \
+			  if [ "$${rootname}" = "mathffp" -o "$${rootname}" = "mathtrans" ]; then \
 			    continue; \
 			  else true; fi; \
 			  echo "making include/inline/$$rootname.h..."; \

@@ -36,7 +36,7 @@
  * if you use this code, please leave a little origin note.
  ******************************************************************************/
 
-const static char version_str[]="$VER: fd2inline " VERSION " (16.09.07)";
+const static char version_str[]="$VER: fd2inline " VERSION " (04.02.22)";
 
 /******************************************************************************
  * These are general definitions including types for defining registers etc.
@@ -77,7 +77,7 @@ const static char *LibExcTable[]=
 	"BattMemBase",				"Node",
 	"CamdBase",					"CamdBase",
 	"ConsoleDevice",			"Device",
-	"DisassemblerBase",				"DisassemblerBase",
+	"DisassemblerBase",		"DisassemblerBase",
 	"DiskBase",					"DiskResource",
 	"DOSBase",					"DosLibrary",
 	"SysBase",					"ExecBase",
@@ -91,11 +91,11 @@ const static char *LibExcTable[]=
 	"MathIeeeDoubTransBase","MathIEEEBase",
 	"MathIeeeSingBasBase",	"MathIEEEBase",
 	"MathIeeeSingTransBase","MathIEEEBase",
-	"MemoryBase",					"MemoryLibrary",
+	"MemoryBase",				"MemoryLibrary",
 	"MiscBase",					"Node",
-	"MC68040Base",					"MC68040Base",
-	"MC68060Base",					"MC68060Base",
-	"MC680x0Base",					"MC680x0Base",
+	"MC68040Base",				"MC68040Base",
+	"MC68060Base",				"MC68060Base",
+	"MC680x0Base",				"MC680x0Base",
 	"MMUBase",					"MMUBase",
 	"PotgoBase",				"Node",
 	"RamdriveDevice",			"Device",
@@ -1120,6 +1120,8 @@ fD_parsefd(fdDef* obj, fdFile* infile)
 
 						if (*bnext == ')')
 						{
+							while (isblank(bnext[1]))
+								bnext++;
 							if (bnext[1] != '(')
 							{
 								fprintf(stderr, "registers expected in line %lu: %s\n",
@@ -1412,14 +1414,15 @@ const static char *TagExcTable[]=
 	"BuildEasyRequestArgs",	"BuildEasyRequest",
 	"DoDTMethodA",				"DoDTMethod",
 	"DoGadgetMethodA",		"DoGadgetMethod",
+	"DoShellMethodTagList",	"DoShellMethod",
 	"EasyRequestArgs",		"EasyRequest",
 	"MUI_MakeObjectA",		"MUI_MakeObject",
 	"MUI_RequestA",			"MUI_Request",
 	"PrintDTObjectA",			"PrintDTObject",
-	"UMSVLog",					"UMSLog",
 	"VFWritef",					"FWritef",
 	"VFPrintf",					"FPrintf",
 	"VPrintf",					"Printf",
+	"VSNPrintf",				"SNPrintf",
 	"vsyslog",					"syslog",
 };
 
@@ -1490,9 +1493,16 @@ aliasfunction(const char* name)
 {
 	const static char *AliasTable[]=
 	{
+		"AddHeadMinList",	"AddHead",
+		"AddTailMinList",	"AddTail",
 		"AllocDosObject",	"AllocDosObjectTagList",
 		"CreateNewProc",	"CreateNewProcTagList",
+		"InsertMinNode",	"Insert",
 		"NewLoadSeg",		"NewLoadSegTagList",
+		"RefreshDTObject","RefreshDTObjects",
+		"RemHeadMinList",	"RemHead",
+		"RemTailMinList",	"RemTail",
+		"RemoveMinNode",	"Remove",
 		"System",			"SystemTagList",
 		"muCheckPasswd",	"muCheckPasswdTagList"
 	};
@@ -1693,34 +1703,43 @@ fD_write(FILE* outfile, const fdDef* obj)
 			for (count=d0; count<numregs-1; count++)
 				fprintf(outfile, "(a%d), ", count);
 
-			fprintf(outfile, "(%s)_tags);})\n#endif /* !NO_INLINE_STDARG */\n\n",
+			fprintf(outfile, "(%s)_tags);})\n",
 				fD_GetProto(obj, fD_RegNum(obj)-1));
+			if ((chtmp=aliasfunction(tagname))!=0)
+				fprintf(outfile, "\n#define %s %s\n", chtmp, tagname);
+
+			fprintf(outfile, "#endif /* !NO_INLINE_STDARG */\n\n");
 		}
 		else
 		{
-			fprintf(outfile, "%s %s(", rettype, tagname);
-
-			for (count=d0; count<numregs-1; count++)
+			const char *alias=tagname;
+			do
 			{
-				chtmp=fD_GetProto(obj, count);
-				if (count==fD_GetFuncParNum(obj))
-					fprintf(outfile, chtmp, fD_GetParam(obj, count));
-				else
-					fprintf(outfile, "%s%s%s", chtmp,
-						(*(chtmp+strlen(chtmp)-1)=='*' ? "" : " "),
-						fD_GetParam(obj, count));
-				fprintf(outfile, ", ");
+				fprintf(outfile, "%s %s(", rettype, alias);
+
+				for (count=d0; count<numregs-1; count++)
+				{
+					chtmp=fD_GetProto(obj, count);
+					if (count==fD_GetFuncParNum(obj))
+						fprintf(outfile, chtmp, fD_GetParam(obj, count));
+					else
+						fprintf(outfile, "%s%s%s", chtmp,
+							(*(chtmp+strlen(chtmp)-1)=='*' ? "" : " "),
+							fD_GetParam(obj, count));
+					fprintf(outfile, ", ");
+				}
+
+				fprintf(outfile, "int tag, ...)\n{\n   ");
+				if (!vd)
+					fprintf(outfile, "return ");
+
+				fprintf(outfile, "%s(", name);
+				for (count=d0; count<numregs-1; count++)
+					fprintf(outfile, "%s, ", fD_GetParam(obj, count));
+
+				fprintf(outfile, "(%s)&tag);\n}\n\n", fD_GetProto(obj, fD_RegNum(obj)-1));
 			}
-
-			fprintf(outfile, "int tag, ...)\n{\n   ");
-			if (!vd)
-				fprintf(outfile, "return ");
-
-			fprintf(outfile, "%s(", name);
-			for (count=d0; count<numregs-1; count++)
-				fprintf(outfile, "%s, ", fD_GetParam(obj, count));
-
-			fprintf(outfile, "(%s)&tag);\n}\n\n", fD_GetProto(obj, fD_RegNum(obj)-1));
+			while ((alias=aliasfunction(alias))!=0 && strcmp(alias, tagname)!=0);
 		}
 	}
 
@@ -1820,11 +1839,11 @@ ishandleddifferently(const char* proto, const char* funcname)
 
 	/* It might be one from dos.library/DoPkt() family. */
 	if (strlen(funcname)==6 && !strncmp(funcname, "DoPkt", 5) &&
-	funcname[5]>='0' && funcname[6]<='4')
+	funcname[5]>='0' && funcname[5]<='4')
 		return 1;
 
-	/* Finally, it can be intuition.library/ReportMouse1() or datatypes.library/RefreshDTObjects(). */
-	return !strcmp(funcname, "ReportMouse1") || !strcmp(funcname, "RefreshDTObjects");
+	/* Finally, it can be intuition.library/ReportMouse1(). */
+	return !strcmp(funcname, "ReportMouse1");
 }
 
 void
