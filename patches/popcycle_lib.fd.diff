@@ -1,0 +1,13 @@
+--- /dev/null	Thu Jan  1 01:00:00 1970
++++ popcycle_lib.fd	Wed Feb  2 01:38:07 2022
+@@ -0,0 +1,10 @@
++##base _PopCycleBase
++##bias 30
++##public
++*--- functions in V40 or higher (Release 3.1) ---
++POPCYCLE_GetClass()()
++AllocPopCycleNodeA(tags)(a0)
++FreePopCycleNode(node)(a0)
++SetPopCycleNodeAttrsA(node,tags)(a0/a1)
++GetPopCycleNodeAttrsA(node,tags)(a0/a1)
++##end

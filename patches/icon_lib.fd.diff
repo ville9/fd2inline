@@ -1,0 +1,9 @@
+--- icon_lib.fd.orig	Tue Apr 13 02:41:06 2021
++++ icon_lib.fd	Mon Jan 31 08:58:58 2022
+@@ -1,5 +1,6 @@
+ ##base _IconBase
+ ##bias 30
++##private
+ iconPrivate1()()
+ iconPrivate2()()
+ iconPrivate3()()

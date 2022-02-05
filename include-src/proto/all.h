@@ -3,7 +3,6 @@
 
 #include <proto/alib.h>
 #include <proto/amigaguide.h>
-#include <proto/aml.h>
 #include <proto/arexx.h>
 #include <proto/asl.h>
 #include <proto/battclock.h>
@@ -25,12 +24,13 @@
 #include <proto/disk.h>
 #include <proto/diskfont.h>
 #include <proto/dos.h>
-#include <proto/drawlist>
+#include <proto/drawlist.h>
 #include <proto/dtclass.h>
 #include <proto/exec.h>
 #include <proto/expansion.h>
 #include <proto/fuelgauge.h>
 #include <proto/gadtools.h>
+#include <proto/getcolor.h>
 #include <proto/getfile.h>
 #include <proto/getfont.h>
 #include <proto/getscreenmode.h>
@@ -46,6 +46,7 @@
 #include <proto/layers.h>
 #include <proto/layout.h>
 #include <proto/listbrowser.h>
+#include <proto/listview.h>
 #include <proto/locale.h>
 #include <proto/lowlevel.h>
 #include <proto/mathieeedoubbas.h>
@@ -62,16 +63,16 @@
 #include <proto/ramdrive.h>
 #include <proto/realtime.h>
 #include <proto/requester.h>
-#include <proto/resource.h>
 #include <proto/rexxsyslib.h>
 #include <proto/scroller.h>
+#include <proto/sketchboard.h>
 #include <proto/slider.h>
 #include <proto/space.h>
 #include <proto/speedbar.h>
 #include <proto/string.h>
 #include <proto/texteditor.h>
-#include <proto/textfield.h>
 #include <proto/timer.h>
+#include <proto/trackfile.h>
 #include <proto/translator.h>
 #include <proto/utility.h>
 #include <proto/virtual.h>

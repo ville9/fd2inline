@@ -1,0 +1,23 @@
+--- /dev/null	Thu Jan  1 01:00:00 1970
++++ amigaguideclass_lib.fd	Wed Feb  2 00:22:29 2022
+@@ -0,0 +1,20 @@
++##base _AmigaGuideClassBase
++##bias 30
++##public
++*--- functions in V40 or higher (Release 3.1) ---
++ObtainEngine()()
++LoadXRef(lock,name)(a0/a1)
++ExpungeXRef()()
++AddPathEntries(path,argptr)(a0,d0)
++CopyPathList(p)(a0)
++FreePathList(p)(a0)
++ParsePathString(line,argv,max)(d0/a0,d1)
++LockE(p,name,mode)(a0,d1/d2)
++OpenE(p,name,mode)(a0,d1/d2)
++SetCurrentDirE(p,name)(a0,d1)
++GetAGString(id)(d0)
++AddAGHostA(h,name,attrs)(a0,d0/a1)
++RemoveAGHostA(handle,attrs)(a0/a1)
++AddXRef(name,file,line,type)(a0/a1,d0/d1)
++GetXRef(name)(a0)
++##end

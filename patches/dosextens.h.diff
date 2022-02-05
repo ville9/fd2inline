@@ -1,0 +1,11 @@
+--- dosextens.h.orig	Tue Apr 13 02:41:06 2021
++++ dosextens.h	Sat Feb  5 10:20:52 2022
+@@ -245,7 +245,7 @@ struct DosLibrary {
+     LONG    dl_A5;
+     LONG    dl_A6;
+     struct ErrorString *dl_Errors;	  /* PRIVATE pointer to array of error msgs */
+-    struct timerequest *dl_TimeReq;	  /* PRIVATE pointer to timer request */
++    TimeRequest_Type   *dl_TimeReq;	  /* PRIVATE pointer to timer request */
+     struct Library     *dl_UtilityBase;   /* PRIVATE ptr to utility library */
+     struct Library     *dl_IntuitionBase; /* PRIVATE ptr to intuition library */
+ };  /*	DosLibrary */

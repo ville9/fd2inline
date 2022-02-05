@@ -1,0 +1,9 @@
+--- trackfile_lib.fd.orig	Tue Apr 13 02:41:06 2021
++++ trackfile_lib.fd	Tue Feb  1 01:19:20 2022
+@@ -1,5 +1,6 @@
+ ##base _TrackFileBase
+ ##bias 6
++##private
+ trackfilePrivate1()()
+ trackfilePrivate2()()
+ trackfilePrivate3()()

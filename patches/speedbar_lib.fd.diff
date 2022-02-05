@@ -1,0 +1,13 @@
+--- /dev/null	Thu Jan  1 01:00:00 1970
++++ speedbar_lib.fd	Wed Feb  2 01:52:25 2022
+@@ -0,0 +1,10 @@
++##base _SpeedBarBase
++##bias 30
++##public
++*--- functions in V40 or higher (Release 3.1) ---
++SPEEDBAR_GetClass()()
++AllocSpeedButtonNodeA(number,tags)(d0/a0)
++FreeSpeedButtonNode(node)(a0)
++SetSpeedButtonNodeAttrsA(node,tags)(a0/a1)
++GetSpeedButtonNodeAttrsA(node,tags)(a0/a1)
++##end

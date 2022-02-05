@@ -3,7 +3,7 @@
 
 /*
    General macros for Amiga function calls. Not all the possibilities have
-   been created - only the ones which exist in OS 3.9. Third party libraries
+   been created - only the ones which exist in OS 3.2. Third party libraries
    and future versions of AmigaOS will maybe need some new ones...
 
    LPX - functions that take X arguments.
@@ -248,6 +248,26 @@
    });								\
 })
 
+#define LP2A5(offs, rt, name, t1, v1, r1, t2, v2, r2, bt, bn)	\
+({								\
+   t1 _##name##_v1 = (v1);					\
+   t2 _##name##_v2 = (v2);					\
+   ({								\
+      register int _d1 __asm("d1");				\
+      register int _a0 __asm("a0");				\
+      register int _a1 __asm("a1");				\
+      register rt _##name##_re __asm("d0");			\
+      register void *const _##name##_bn __asm("a6") = (bn); 	\
+      register t1 _n1 __asm(#r1) = _##name##_v1;		\
+      register t2 _n2 __asm(#r2) = _##name##_v2;		\
+      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
+      : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2)		\
+      : "fp0", "fp1", "cc", "memory");				\
+      _##name##_re;						\
+   });								\
+})
+
 #define LP3(offs, rt, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn) \
 ({								\
    t1 _##name##_v1 = (v1);					\
@@ -379,6 +399,28 @@
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
       : "fp0", "fp1", "cc", "memory");				\
    }								\
+})
+
+#define LP3A5(offs, rt, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn) \
+({								\
+   t1 _##name##_v1 = (v1);					\
+   t2 _##name##_v2 = (v2);					\
+   t3 _##name##_v3 = (v3);					\
+   ({								\
+      register int _d1 __asm("d1");				\
+      register int _a0 __asm("a0");				\
+      register int _a1 __asm("a1");				\
+      register rt _##name##_re __asm("d0");			\
+      register void *const _##name##_bn __asm("a6") = (bn); 	\
+      register t1 _n1 __asm(#r1) = _##name##_v1;		\
+      register t2 _n2 __asm(#r2) = _##name##_v2;		\
+      register t3 _n3 __asm(#r3) = _##name##_v3;		\
+      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
+      : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
+      : "fp0", "fp1", "cc", "memory");				\
+      _##name##_re;						\
+   });								\
 })
 
 #define LP4(offs, rt, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, t4, v4, r4, bt, bn) \
@@ -1557,6 +1599,9 @@
 #define LP2FP(offs, rt, name, t1, v1, r1, t2, v2, r2, bt, bn, fpt) \
    LP2(offs, rt, name, t1, v1, r1, t2, v2, r2, bt, bn)
 
+#define LP2A5(offs, rt, name, t1, v1, r1, t2, v2, r2, bt, bn)	\
+   LP2(offs, rt, name, t1, v1, EXG_##r1(a5), t2, v2, EXG_##r2(a5), bt, bn)
+
 #define LP3NR(offs, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn) \
    LP3(offs, VOID, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn)
 
@@ -1571,6 +1616,9 @@
 /* Only graphics.library/SetCollision() */
 #define LP3NRFP(offs, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn, fpt) \
    LP3(offs, VOID, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn)
+
+#define LP3A5(offs, rt, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, bt, bn) \
+   LP3(offs, rt, name, t1, v1, EXG_##r1(a5), t2, v2, EXG_##r2(a5), t3, v3, EXG_##r3(a5), bt, bn)
 
 #define LP4NR(offs, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, t4, v4, r4, bt, bn) \
    LP4(offs, VOID, name, t1, v1, r1, t2, v2, r2, t3, v3, r3, t4, v4, r4, bt, bn)

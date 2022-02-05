@@ -1,0 +1,9 @@
+--- /dev/null	Thu Jan  1 01:00:00 1970
++++ space_lib.fd	Wed Feb  2 01:51:38 2022
+@@ -0,0 +1,6 @@
++##base _SpaceBase
++##bias 30
++##public
++*--- functions in V40 or higher (Release 3.1) ---
++SPACE_GetClass()()
++##end

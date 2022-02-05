@@ -2,12 +2,12 @@
 @c %**start of header
 @setfilename fd2inline.info
 @settitle FD2InLine User's Guide
-@set lastupdate September 16th, 2007
+@set lastupdate February 4th, 2022
 @include version.texi
 @c %**end of header
 
 @ifinfo
-This is a user's guide to FD2Inline @value{version}, a parser
+This is a user's guide to FD2InLine @value{version}, a parser
 converting FD files to GCC ``inlines''.
 
 Copyright @copyright{} 1996, 1997, 1998 Kamil Iskra
@@ -22,13 +22,13 @@ preserved on all copies.
 @center @titlefont{FD2InLine}
 @subtitle User's Guide to FD2InLine parser
 @subtitle @value{lastupdate}
-@author Kamil Iskra
+@author Kamil Iskra & Christian Sauer
 @page
 @end titlepage
 
 @ifinfo
 @node Top, Introduction, (dir), (dir)
-This is a user's guide to @samp{FD2Inline} @value{version}, a parser
+This is a user's guide to @samp{FD2InLine} @value{version}, a parser
 that converts the AmigaOS shared library @samp{FD} files to
 format accepted by the @samp{GNU CC}.
 
@@ -97,8 +97,8 @@ install anything. Starting with @samp{GCC} 2.7.2, the new format
 compiler. However, the separate
 @file{fd2inline-@value{version}-bin.lha} archive will always contain
 the latest version of @samp{FD2InLine} and the @samp{inlines}, which
-might not be true for the @samp{GeekGadgets} or @samp{Aminet}
-distributions. @samp{GeekGadgets} distribution might not contain some
+might not be true for the @samp{Geek Gadgets} or @samp{Aminet}
+distributions. @samp{Geek Gadgets} distribution might not contain some
 of the supported 3rd party libraries' @samp{inlines}.
 
 The installation is very easy, so there is no Installer script :-).
@@ -214,7 +214,7 @@ this, define @code{_USEOLDEXEC_} before including @file{proto/exec.h}.
 
 @node Using fd2inline, Using inlines, Using inlines, Usage
 @section Using fd2inline
-@cindex Using FD2Inline
+@cindex Using FD2InLine
 @cindex Creating inlines
 
 You invoke @samp{FD2InLine} by writing:
@@ -374,23 +374,20 @@ make install
 This will install @samp{fd2inline}, the @samp{inlines} and the
 documentation in the appropriate subdirectories of @file{GG:}.
 
-The @file{fd2inline-@value{version}-src.lha} archive contains three
+The @file{fd2inline-@value{version}-src.lha} archive contains some
 patches in unified diff format, in directory @file{patches}. They fix
-bugs in AmigaOS 3.9 headers. Applying @file{timer.h.diff} to
-@file{devices/timer.h} will prevent collision with IXEmul's
-@file{sys/time.h}. @file{hdwrench.h.diff} disables @samp{SAS/C} style
-prototypes in @file{libraries/hdwrench.h} for @samp{GCC}. Use @code{patch} to
-apply these patches, for example:
+bugs in AmigaOS 3.2 @samp{fd} files. Use @code{patch} to apply these
+patches, for example:
 
 @example
-cd GG:os-include/devices
-patch timer.h <timer.h.diff
+cd GG:os-lib/fd
+patch icon_lib.fd <icon_lib.fd.diff
 @end example
 
-@samp{GeekGadgets} distribution contains more complete set of patches.
+@samp{Geek Gadgets} distribution contains more complete set of patches.
 
 @cindex Source code
-A few words about the source code:
+A few words from Kamil Iskra about the source code:
 
 I know, it's not state-of-the-art @samp{C} programming example.
 However, believe me, it was in @emph{much} worse condition when I took
@@ -737,6 +734,24 @@ stubs (@pxref{Using fd2inline}).
 @cindex History
 @cindex What has changed
 
+Version 1.33,  February 4th, 2022,  Christian Sauer
+@itemize @bullet
+@item
+Reworked patches for AmigaOS 3.2 includes.
+@item
+Fixed recognition of @code{dos.library/DoPkt()} family.
+@item
+Fixed a bug in parsing of @samp{fd} files where the register declaration had
+preceding whitespace.
+@item
+Improved support for alias functions and added those of @samp{exec.library}.
+@item
+Added @code{LP2A5} and @code{LP3A5} macros to @file{inline/macros.h}.
+@item
+Added support for varargs functions of @samp{dos.library} and
+@samp{utility.library} with nonstandard naming convention.
+@end itemize
+
 Version 1.32,  September 16th, 2007,  Christian Sauer
 @itemize @bullet
 @item
@@ -873,12 +888,13 @@ created by Kamil Iskra or @samp{FD2InLine}. Most of the files in
 @file{strsup.h} and @file{stubs.h}) were written by Gunther Nikl (with
 some modifications by Joerg Hoehle and Kamil Iskra).
 
-If you have any comments concerning this work, please write to:
+When the Geek Gadgets Project was discontinued, I decided to take over
+development of @samp{FD2InLine}.
+Latest version of this package should always be available on GitHub:
 
-gg-gcc@@ninemoons.com
-
-This is a list to which most of the @samp{GeekGadgets} developers and
-activists subscribe, so you are practically guaranteed to get a reply.
+@format
+https://github.com/ville9/fd2inline
+@end format
 
 @node Index, , Authors, Top
 @chapter Index

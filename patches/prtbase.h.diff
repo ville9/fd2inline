@@ -1,0 +1,11 @@
+--- prtbase.h.orig	Tue Apr 13 02:41:06 2021
++++ prtbase.h	Sat Feb  5 10:21:11 2022
+@@ -152,7 +152,7 @@ struct   PrinterData {
+ #define  pd_PIOR1 pd_ior1.pd_p1
+ #define  pd_SIOR1 pd_ior1.pd_s1
+ 
+-	struct timerequest pd_TIOR;	/* timer I/O request */
++	TimeRequest_Type pd_TIOR;	/* timer I/O request */
+ 	struct MsgPort pd_IORPort;	/* and message reply port */
+ 	struct Task pd_TC;		/* write task */
+         /* PRIVATE: and stack space (OBSOLETE) */
