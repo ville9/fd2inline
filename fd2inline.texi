@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename fd2inline.info
 @settitle FD2InLine User's Guide
-@set lastupdate February 4th, 2022
+@set lastupdate February 10th, 2022
 @include version.texi
 @c %**end of header
 
@@ -733,6 +733,12 @@ stubs (@pxref{Using fd2inline}).
 @chapter History
 @cindex History
 @cindex What has changed
+
+Version 1.34,  February 10th, 2022,  Christian Sauer
+@itemize @bullet
+@item
+Fixed handling of whitespace preceding register declarations.
+@end itemize
 
 Version 1.33,  February 4th, 2022,  Christian Sauer
 @itemize @bullet

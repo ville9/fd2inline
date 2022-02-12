@@ -36,7 +36,7 @@
  * if you use this code, please leave a little origin note.
  ******************************************************************************/
 
-const static char version_str[]="$VER: fd2inline " VERSION " (04.02.22)";
+const static char version_str[]="$VER: fd2inline " VERSION " (10.02.22)";
 
 /******************************************************************************
  * These are general definitions including types for defining registers etc.
@@ -1120,9 +1120,9 @@ fD_parsefd(fdDef* obj, fdFile* infile)
 
 						if (*bnext == ')')
 						{
-							while (isblank(bnext[1]))
-								bnext++;
-							if (bnext[1] != '(')
+							for (index=1; isblank(bnext[index]); index++);
+
+							if (bnext[index] != '(')
 							{
 								fprintf(stderr, "registers expected in line %lu: %s\n",
 									infile->lineno, infile->line);
@@ -1131,7 +1131,7 @@ fD_parsefd(fdDef* obj, fdFile* infile)
 							else
 							{
 								parsing=regs;
-								bpoint=bnext+2;
+								bpoint=bnext+index+1;
 							}
 						}
 						else
