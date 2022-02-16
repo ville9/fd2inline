@@ -53,8 +53,8 @@ $(INCBASE)b32.asm:	$(INCBASE).c
 
 $(INCBASE).c:		$(INCBASE).h
 			$(RM) $(INCBASE).c
-			grep '#include' $(AMIGAOS_HEADER_PATH)/clib/$(INCBASE)_protos.h >$(INCBASE).c
-			if [ -f $(srcdir)/../include-src/proto/$(INCBASE).h ]; then \
+			-grep '#include' $(AMIGAOS_HEADER_PATH)/clib/$(INCBASE)_protos.h >$(INCBASE).c
+			-if [ -f $(srcdir)/../include-src/proto/$(INCBASE).h ]; then \
 				grep '#include' $(srcdir)/../include-src/proto/$(INCBASE).h \
 				| grep -v '#include.*<clib/' | grep -v '#include.*<inline/' \
 				| grep -v '#include.*<proto/' >>$(INCBASE).c; \

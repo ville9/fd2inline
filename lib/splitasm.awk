@@ -10,9 +10,9 @@
 # It is used to create linker libraries with stubs for Amiga shared libraries'
 # functions.
 
-/^.globl/ {
+/^\t.globl/ {
 	currfn=substr($2, 2) ".s"
-	print ".text\n\t.even" >currfn
+	print "\t.text\n\t.even" >currfn
 }
 
 currfn!="" {

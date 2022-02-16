@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename fd2inline.info
 @settitle FD2InLine User's Guide
-@set lastupdate February 10th, 2022
+@set lastupdate February 16th, 2022
 @include version.texi
 @c %**end of header
 
@@ -734,10 +734,12 @@ stubs (@pxref{Using fd2inline}).
 @cindex History
 @cindex What has changed
 
-Version 1.34,  February 10th, 2022,  Christian Sauer
+Version 1.34,  February 16th, 2022,  Christian Sauer
 @itemize @bullet
 @item
 Fixed handling of whitespace preceding register declarations.
+@item
+Reworked support for building linker libraries.
 @end itemize
 
 Version 1.33,  February 4th, 2022,  Christian Sauer
@@ -889,10 +891,10 @@ fixed all the bugs known to him, added some new features, and wrote
 this terribly long documentation :-).
 
 Not all of the files distributed in the @samp{FD2InLine} archives were
-created by Kamil Iskra or @samp{FD2InLine}. Most of the files in
+created by me or @samp{FD2InLine}. Most of the files in
 @file{include-src/proto} and @file{include-src/inline} (@file{alib.h},
 @file{strsup.h} and @file{stubs.h}) were written by Gunther Nikl (with
-some modifications by Joerg Hoehle and Kamil Iskra).
+some modifications by Joerg Hoehle, Kamil Iskra and me).
 
 When the Geek Gadgets Project was discontinued, I decided to take over
 development of @samp{FD2InLine}.
