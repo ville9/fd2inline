@@ -24,6 +24,11 @@
 
 #ifndef __PPC__
 
+/* provide a syscall macro */
+#ifndef __AMIGAOS_SYSCALL
+#define __AMIGAOS_SYSCALL(FUNC) "jsr %/a6@(-"#FUNC":w)"
+#endif /* __AMIGAOS_SYSCALL */
+
 #define LP0(offs, rt, name, bt, bn)				\
 ({								\
    ({								\
@@ -32,7 +37,7 @@
       register int _a1 __asm("a1");				\
       register rt _##name##_re __asm("d0");			\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn)					\
       : "fp0", "fp1", "cc", "memory");				\
@@ -48,7 +53,7 @@
       register int _a0 __asm("a0");				\
       register int _a1 __asm("a1");				\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn)					\
       : "fp0", "fp1", "cc", "memory");				\
@@ -65,7 +70,7 @@
       register rt _##name##_re __asm("d0");			\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -83,7 +88,7 @@
       register int _a1 __asm("a1");				\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -102,7 +107,7 @@
       register rt _##name##_re __asm("d0");			\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -121,7 +126,7 @@
       register rt _##name##_re __asm("d0");			\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
-      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      __asm volatile ("exg %/d7,%/a5\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a5" \
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -140,7 +145,7 @@
       register int _a1 __asm("a1");				\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
-      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      __asm volatile ("exg %/d7,%/a5\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a5" \
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -159,7 +164,7 @@
       register rt _##name##_re __asm("d0");			\
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
-      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      __asm volatile ("exg %/d7,%/a5\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a5" \
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -179,7 +184,7 @@
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2)		\
       : "fp0", "fp1", "cc", "memory");				\
@@ -199,7 +204,7 @@
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2)		\
       : "fp0", "fp1", "cc", "memory");				\
@@ -218,7 +223,7 @@
       register rt _##name##_re __asm("d0");			\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r"(_n1), "rf"(_n2)					\
       : "fp0", "fp1", "cc", "memory");				\
@@ -240,7 +245,7 @@
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2)		\
       : "fp0", "fp1", "cc", "memory");				\
@@ -260,7 +265,7 @@
       register void *const _##name##_bn __asm("a6") = (bn); 	\
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
-      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      __asm volatile ("exg %/d7,%/a5\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a5" \
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2)		\
       : "fp0", "fp1", "cc", "memory");				\
@@ -282,7 +287,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
       : "fp0", "fp1", "cc", "memory");				\
@@ -304,7 +309,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
       : "fp0", "fp1", "cc", "memory");				\
@@ -325,7 +330,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r"(_n1), "rf"(_n2), "rf"(_n3)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -347,7 +352,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r"(_n1), "rf"(_n2), "rf"(_n3)				\
       : "fp0", "fp1", "cc", "memory");				\
@@ -370,7 +375,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
       : "fp0", "fp1", "cc", "memory");				\
@@ -394,7 +399,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
       : "fp0", "fp1", "cc", "memory");				\
@@ -415,7 +420,7 @@
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
-      __asm volatile ("exg d7,a5\n\tjsr a6@(-"#offs":W)\n\texg d7,a5" \
+      __asm volatile ("exg %/d7,%/a5\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a5" \
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3)	\
       : "fp0", "fp1", "cc", "memory");				\
@@ -439,7 +444,7 @@
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -463,7 +468,7 @@
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -488,7 +493,7 @@
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -514,7 +519,7 @@
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -540,7 +545,7 @@
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -567,7 +572,7 @@
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -595,7 +600,7 @@
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -623,7 +628,7 @@
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -652,7 +657,7 @@
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -680,7 +685,7 @@
       register t4 _n4 __asm(#r4) = _##name##_v4;		\
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
-      __asm volatile ("exg d7,a4\n\tjsr a6@(-"#offs":W)\n\texg d7,a4" \
+      __asm volatile ("exg %/d7,%/a4\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a4" \
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -710,7 +715,7 @@
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -740,7 +745,7 @@
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -770,7 +775,7 @@
       register t5 _n5 __asm(#r5) = _##name##_v5;		\
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
-      __asm volatile ("exg d7,a4\n\tjsr a6@(-"#offs":W)\n\texg d7,a4" \
+      __asm volatile ("exg %/d7,%/a4\n\t" __AMIGAOS_SYSCALL(offs) "\n\texg %/d7,%/a4" \
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -806,7 +811,7 @@
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
       register t8 _n8 __asm(#r8) = _##name##_v8;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -839,7 +844,7 @@
       register t6 _n6 __asm(#r6) = _##name##_v6;		\
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
       register t8 _n8 __asm(#r8) = _##name##_v8;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -873,7 +878,7 @@
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
       register t8 _n8 __asm(#r8) = _##name##_v8;		\
       register t9 _n9 __asm(#r9) = _##name##_v9;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8), "rf"(_n9) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -908,7 +913,7 @@
       register t7 _n7 __asm(#r7) = _##name##_v7;		\
       register t8 _n8 __asm(#r8) = _##name##_v8;		\
       register t9 _n9 __asm(#r9) = _##name##_v9;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8), "rf"(_n9) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -944,7 +949,7 @@
       register t8 _n8 __asm(#r8) = _##name##_v8;		\
       register t9 _n9 __asm(#r9) = _##name##_v9;		\
       register t10 _n10 __asm(#r10) = _##name##_v10;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8), "rf"(_n9), "rf"(_n10) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -981,7 +986,7 @@
       register t8 _n8 __asm(#r8) = _##name##_v8;		\
       register t9 _n9 __asm(#r9) = _##name##_v9;		\
       register t10 _n10 __asm(#r10) = _##name##_v10;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_d0), "=r" (_d1), "=r" (_a0), "=r" (_a1)		\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8), "rf"(_n9), "rf"(_n10) \
       : "fp0", "fp1", "cc", "memory");				\
@@ -1019,7 +1024,7 @@
       register t9 _n9 __asm(#r9) = _##name##_v9;		\
       register t10 _n10 __asm(#r10) = _##name##_v10;		\
       register t11 _n11 __asm(#r11) = _##name##_v11;		\
-      __asm volatile ("jsr a6@(-"#offs":W)"			\
+      __asm volatile (__AMIGAOS_SYSCALL(offs)			\
       : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8), "rf"(_n9), "rf"(_n10), "rf"(_n11) \
       : "fp0", "fp1", "cc", "memory");				\
