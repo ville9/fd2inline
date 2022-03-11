@@ -2,7 +2,6 @@ bin/fd2inline
 guide/fd2inline.guide
 include/inline/alib.h
 include/inline/amigaguide.h
-include/inline/amigaguideclass.h
 include/inline/arexx.h
 include/inline/asl.h
 include/inline/battclock.h
@@ -25,7 +24,6 @@ include/inline/disk.h
 include/inline/diskfont.h
 include/inline/dos.h
 include/inline/drawlist.h
-include/inline/dtclass.h
 include/inline/exec.h
 include/inline/expansion.h
 include/inline/fuelgauge.h
@@ -58,7 +56,6 @@ include/inline/misc.h
 include/inline/nonvolatile.h
 include/inline/palette.h
 include/inline/penmap.h
-include/inline/popcycle.h
 include/inline/potgo.h
 include/inline/radiobutton.h
 include/inline/ramdrive.h
@@ -82,7 +79,6 @@ include/inline/virtual.h
 include/inline/wb.h
 include/inline/window.h
 include/pragmas/amigaguide_pragmas.h
-include/pragmas/amigaguideclass_pragmas.h
 include/pragmas/arexx_pragmas.h
 include/pragmas/asl_pragmas.h
 include/pragmas/battclock_pragmas.h
@@ -105,7 +101,6 @@ include/pragmas/disk_pragmas.h
 include/pragmas/diskfont_pragmas.h
 include/pragmas/dos_pragmas.h
 include/pragmas/drawlist_pragmas.h
-include/pragmas/dtclass_pragmas.h
 include/pragmas/exec_pragmas.h
 include/pragmas/expansion_pragmas.h
 include/pragmas/fuelgauge_pragmas.h
@@ -137,7 +132,6 @@ include/pragmas/misc_pragmas.h
 include/pragmas/nonvolatile_pragmas.h
 include/pragmas/palette_pragmas.h
 include/pragmas/penmap_pragmas.h
-include/pragmas/popcycle_pragmas.h
 include/pragmas/potgo_pragmas.h
 include/pragmas/radiobutton_pragmas.h
 include/pragmas/ramdrive_pragmas.h
@@ -161,7 +155,6 @@ include/pragmas/window_pragmas.h
 include/proto/alib.h
 include/proto/all.h
 include/proto/amigaguide.h
-include/proto/amigaguideclass.h
 include/proto/arexx.h
 include/proto/asl.h
 include/proto/battclock.h
@@ -184,7 +177,6 @@ include/proto/disk.h
 include/proto/diskfont.h
 include/proto/dos.h
 include/proto/drawlist.h
-include/proto/dtclass.h
 include/proto/exec.h
 include/proto/expansion.h
 include/proto/fuelgauge.h
@@ -218,7 +210,6 @@ include/proto/misc.h
 include/proto/nonvolatile.h
 include/proto/palette.h
 include/proto/penmap.h
-include/proto/popcycle.h
 include/proto/potgo.h
 include/proto/radiobutton.h
 include/proto/ramdrive.h

@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename fd2inline.info
 @settitle FD2InLine User's Guide
-@set lastupdate March 2nd, 2022
+@set lastupdate March 11th, 2022
 @include version.texi
 @c %**end of header
 
@@ -734,7 +734,7 @@ stubs (@pxref{Using fd2inline}).
 @cindex History
 @cindex What has changed
 
-Version 1.34,  March 2nd, 2022,  Christian Sauer
+Version 1.34,  March 11th, 2022,  Christian Sauer
 @itemize @bullet
 @item
 Fixed handling of whitespace preceding register declarations.
@@ -742,6 +742,8 @@ Fixed handling of whitespace preceding register declarations.
 Reworked support for building linker libraries.
 @item
 Added syscall macro to @file{inline/macros.h} (Gunther Nikl)
+@item
+Reworked patches for NDK 3.2 Release 4.
 @end itemize
 
 Version 1.33,  February 4th, 2022,  Christian Sauer

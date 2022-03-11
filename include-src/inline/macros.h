@@ -27,7 +27,7 @@
 /* provide a syscall macro */
 #ifndef __AMIGAOS_SYSCALL
 #define __AMIGAOS_SYSCALL(FUNC) "jsr %/a6@(-"#FUNC":w)"
-#endif /* __AMIGAOS_SYSCALL */
+#endif /* !__AMIGAOS_SYSCALL */
 
 #define LP0(offs, rt, name, bt, bn)				\
 ({								\

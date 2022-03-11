@@ -1,6 +1,6 @@
---- dosextens.h.orig	Tue Apr 13 02:41:06 2021
-+++ dosextens.h	Sat Feb  5 10:20:52 2022
-@@ -245,7 +245,7 @@ struct DosLibrary {
+--- dosextens.h.orig	Thu Feb  3 11:59:06 2022
++++ dosextens.h	Fri Mar 11 01:19:26 2022
+@@ -248,7 +248,7 @@ struct DosLibrary {
      LONG    dl_A5;
      LONG    dl_A6;
      struct ErrorString *dl_Errors;	  /* PRIVATE pointer to array of error msgs */

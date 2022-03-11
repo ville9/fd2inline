@@ -1,6 +1,6 @@
---- prtbase.h.orig	Tue Apr 13 02:41:06 2021
-+++ prtbase.h	Sat Feb  5 10:21:11 2022
-@@ -152,7 +152,7 @@ struct   PrinterData {
+--- prtbase.h.orig	Thu Feb  3 11:59:06 2022
++++ prtbase.h	Fri Mar 11 01:22:56 2022
+@@ -150,7 +150,7 @@ struct   PrinterData {
  #define  pd_PIOR1 pd_ior1.pd_p1
  #define  pd_SIOR1 pd_ior1.pd_s1
  

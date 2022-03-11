@@ -1,6 +1,6 @@
---- texteditor.h.orig	Tue Apr 13 02:41:06 2021
-+++ texteditor.h	Sat Feb  5 10:20:27 2022
-@@ -221,7 +221,7 @@ struct LeftBarMouseMessage
+--- texteditor.h.orig	Thu Feb  3 11:59:08 2022
++++ texteditor.h	Fri Mar 11 01:33:14 2022
+@@ -248,7 +248,7 @@ struct LeftBarMouseMessage
  	UWORD Qualifier; /* copied from InputEvent */
  	WORD X;		/* mouse position relative to upper left corner of the leftbar area for this line */
  	WORD Y;

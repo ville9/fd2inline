@@ -25,7 +25,6 @@
 #include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/drawlist.h>
-#include <proto/dtclass.h>
 #include <proto/exec.h>
 #include <proto/expansion.h>
 #include <proto/fuelgauge.h>
@@ -57,7 +56,6 @@
 #include <proto/nonvolatile.h>
 #include <proto/palette.h>
 #include <proto/penmap.h>
-#include <proto/popcycle.h>
 #include <proto/potgo.h>
 #include <proto/radiobutton.h>
 #include <proto/ramdrive.h>
