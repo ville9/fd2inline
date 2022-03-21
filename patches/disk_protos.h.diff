@@ -1,0 +1,11 @@
+--- disk_protos.h.orig	Thu Feb  3 11:59:04 2022
++++ disk_protos.h	Mon Mar 21 10:49:34 2022
+@@ -22,7 +22,7 @@ extern "C" {
+ #endif
+ BOOL AllocUnit( LONG unitNum );
+ VOID FreeUnit( LONG unitNum );
+-struct DiskResourceUnit *GetUnit( struct DiskResourceUnit *unitPointer );
++struct DiscResourceUnit *GetUnit( struct DiscResourceUnit *unitPointer );
+ VOID GiveUnit( VOID );
+ LONG GetUnitID( LONG unitNum );
+ /*--- functions in V37 or higher (Release 2.04) ---*/
