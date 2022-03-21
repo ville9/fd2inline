@@ -19,6 +19,7 @@ sysdep/fd2inline/Makefile.in
 sysdep/fd2inline/makepragmas.awk
 sysdep/fd2inline/manifests/bin
 sysdep/fd2inline/manifests/src
+sysdep/fd2inline/patches/disk_protos.h.diff
 sysdep/fd2inline/patches/dosextens.h.diff
 sysdep/fd2inline/patches/icon_lib.fd.diff
 sysdep/fd2inline/patches/listview_lib.fd.diff
