@@ -21,7 +21,7 @@ inlines, one for each function entry.  Using them, GCC can produce
 very efficient code for making function calls to Amiga shared
 libraries.
 .version
-1.34
+1.35
 .author
 Original author: Kamil Iskra
 Interim maintainer: Christian Sauer

@@ -36,7 +36,7 @@
  * if you use this code, please leave a little origin note.
  ******************************************************************************/
 
-const static char version_str[]="$VER: fd2inline " VERSION " (10.02.22)";
+const static char version_str[]="$VER: fd2inline " VERSION " (22.03.22)";
 
 /******************************************************************************
  * These are general definitions including types for defining registers etc.
@@ -73,14 +73,11 @@ char BaseName[32], BaseNamU[32],  BaseNamL[32];
 
 const static char *LibExcTable[]=
 {
-	"BattClockBase",			"Node",
-	"BattMemBase",				"Node",
 	"CamdBase",					"CamdBase",
 	"ConsoleDevice",			"Device",
 	"DisassemblerBase",		"DisassemblerBase",
-	"DiskBase",					"DiskResource",
+	"DiskBase",					"DiscResource",
 	"DOSBase",					"DosLibrary",
-	"SysBase",					"ExecBase",
 	"ExpansionBase",			"ExpansionBase",
 	"GfxBase",					"GfxBase",
 	"HDWBase",					"HDWLibrary",
@@ -92,16 +89,16 @@ const static char *LibExcTable[]=
 	"MathIeeeSingBasBase",	"MathIEEEBase",
 	"MathIeeeSingTransBase","MathIEEEBase",
 	"MemoryBase",				"MemoryLibrary",
-	"MiscBase",					"Node",
 	"MC68040Base",				"MC68040Base",
 	"MC68060Base",				"MC68060Base",
 	"MC680x0Base",				"MC680x0Base",
 	"MMUBase",					"MMUBase",
-	"PotgoBase",				"Node",
 	"RamdriveDevice",			"Device",
 	"RealTimeBase",			"RealTimeBase",
 	"RexxSysBase",				"RxsLib",
+   "SysBase",					"ExecBase",
 	"TimerBase",				"Device",
+	"TrackFileBase",			"Device",
 	"UtilityBase",				"UtilityBase"
 };
 const char *StdLib; /* global lib-name ptr */
