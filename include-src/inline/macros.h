@@ -1034,7 +1034,7 @@
 
 #else /* __PPC__ */
 
-#ifdef WARPUP
+#if defined(WARPUP) || !defined(_CALL_SYSV)
 
 #ifndef POWERPC_POWERPC_H
 #include <powerpc/powerpc.h>
@@ -1335,7 +1335,7 @@
    (rt)_##name##_st.PP_Regs[PPREG_D0];				\
 })
 
-#else /* !WARPUP */
+#else /* !WARPUP && _CALL_SYSV */
 
 #ifndef POWERUP_GCCLIB_PROTOS_H
 #include <powerup/gcclib/powerup_protos.h>
@@ -1573,7 +1573,7 @@
    (rt)PPCCallOS(&_##name##_st);				\
 })
 
-#endif /* !WARPUP */
+#endif /* !WARPUP && _CALL_SYSV */
 
 #define LP0NR(offs, name, bt, bn)				\
    LP0(offs, VOID, name, bt, bn)

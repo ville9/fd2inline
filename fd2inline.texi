@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename fd2inline.info
 @settitle FD2InLine User's Guide
-@set lastupdate March 22nd, 2022
+@set lastupdate May 7th, 2022
 @include version.texi
 @c %**end of header
 
@@ -734,10 +734,12 @@ stubs (@pxref{Using fd2inline}).
 @cindex History
 @cindex What has changed
 
-Version 1.35,  March 22nd, 2022,  Christian Sauer
+Version 1.35,  May 7th, 2022,  Christian Sauer
 @itemize @bullet
 @item
 Updated array of base variable types for NDK 3.2 Release 4.
+@item
+Improved test for WarpOS in @file{inline/macros.h} (Gunther Nikl).
 @end itemize
 
 Version 1.34,  March 11th, 2022,  Christian Sauer
@@ -747,7 +749,7 @@ Fixed handling of whitespace preceding register declarations.
 @item
 Reworked support for building linker libraries.
 @item
-Added syscall macro to @file{inline/macros.h} (Gunther Nikl)
+Added syscall macro to @file{inline/macros.h} (Gunther Nikl).
 @item
 Reworked patches for NDK 3.2 Release 4.
 @end itemize
